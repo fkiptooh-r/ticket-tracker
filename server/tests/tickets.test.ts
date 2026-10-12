@@ -152,3 +152,31 @@ describe("PATCH /tickets/:id", () => {
     });
   });
 });
+
+describe("GET /tickets/stats", () => {
+  it("counts tickets by status", async () => {
+    await seedTickets(["open", "open", "in_progress", "closed", "closed", "closed"]);
+
+    const res = await request(app).get("/tickets/stats");
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ byStatus: { open: 2, in_progress: 1, closed: 3 }, total: 6 });
+  });
+
+  it("reports zero for statuses with no tickets", async () => {
+    await seedTickets(["open"]);
+
+    const res = await request(app).get("/tickets/stats");
+
+    expect(res.body).toEqual({ byStatus: { open: 1, in_progress: 0, closed: 0 }, total: 1 });
+  });
+
+  it("reflects status changes made through PATCH", async () => {
+    await request(app).post("/tickets").send({ title: "Reset my password" });
+    await request(app).patch("/tickets/1").send({ status: "closed" });
+
+    const res = await request(app).get("/tickets/stats");
+
+    expect(res.body.byStatus).toEqual({ open: 0, in_progress: 0, closed: 1 });
+  });
+});

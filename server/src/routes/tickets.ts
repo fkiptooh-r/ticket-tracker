@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { TicketStatus } from "../generated/prisma/enums.js";
 import { prisma } from "../lib/prisma.js";
 import {
   createTicketSchema,
@@ -36,6 +37,22 @@ ticketsRouter.get("/", async (req, res) => {
     data: tickets,
     meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
   });
+});
+
+// Registered before any "/:id" GET route so "stats" is never read as an id.
+ticketsRouter.get("/stats", async (_req, res) => {
+  const groups = await prisma.ticket.groupBy({ by: ["status"], _count: { _all: true } });
+
+  // groupBy omits statuses with no tickets, so start every status at zero.
+  const byStatus = Object.fromEntries(
+    Object.values(TicketStatus).map((status) => [status, 0]),
+  ) as Record<TicketStatus, number>;
+  for (const group of groups) {
+    byStatus[group.status] = group._count._all;
+  }
+
+  const total = Object.values(byStatus).reduce((sum, count) => sum + count, 0);
+  res.json({ byStatus, total });
 });
 
 ticketsRouter.patch("/:id", async (req, res) => {
