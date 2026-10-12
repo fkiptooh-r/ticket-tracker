@@ -1,3 +1,4 @@
+import cors from "cors";
 import express from "express";
 import { errorHandler, notFound } from "./middleware/errors.js";
 import { ticketsRouter } from "./routes/tickets.js";
@@ -6,6 +7,7 @@ import { ticketsRouter } from "./routes/tickets.js";
 export function createApp() {
   const app = express();
 
+  app.use(cors({ origin: process.env.CLIENT_ORIGIN ?? "http://localhost:3000" }));
   app.use(express.json());
 
   app.get("/health", (_req, res) => {
