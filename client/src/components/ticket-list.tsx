@@ -1,7 +1,11 @@
 import type { Ticket } from "@/lib/types";
-import { PriorityBadge, StatusBadge } from "./badges";
+import { PriorityBadge } from "./badges";
+import { TicketStatusSelect } from "./ticket-status-select";
 
-const dateFormat = new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle: "short" });
+const dateFormat = new Intl.DateTimeFormat("en-GB", {
+  dateStyle: "medium",
+  timeStyle: "short",
+});
 
 export function TicketList({ tickets }: { tickets: Ticket[] }) {
   if (tickets.length === 0) {
@@ -17,10 +21,14 @@ export function TicketList({ tickets }: { tickets: Ticket[] }) {
       {tickets.map((ticket) => (
         <li key={ticket.id} className="flex flex-col gap-2 p-4">
           <div className="flex flex-wrap items-start justify-between gap-2">
-            <h2 className="font-medium break-words">{ticket.title}</h2>
-            <div className="flex shrink-0 gap-2">
-              <StatusBadge status={ticket.status} />
+            <h3 className="font-medium wrap-break-word">{ticket.title}</h3>
+            <div className="flex shrink-0 items-start gap-2">
               <PriorityBadge priority={ticket.priority} />
+              <TicketStatusSelect
+                ticketId={ticket.id}
+                ticketTitle={ticket.title}
+                status={ticket.status}
+              />
             </div>
           </div>
           {ticket.description && (
@@ -29,7 +37,8 @@ export function TicketList({ tickets }: { tickets: Ticket[] }) {
             </p>
           )}
           <p className="text-xs text-zinc-500">
-            #{ticket.id} · opened {dateFormat.format(new Date(ticket.createdAt))}
+            #{ticket.id} · opened{" "}
+            {dateFormat.format(new Date(ticket.createdAt))}
           </p>
         </li>
       ))}

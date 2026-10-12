@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { CreateTicketForm } from "@/components/create-ticket-form";
 import { TicketsView, TicketsViewSkeleton } from "@/components/tickets-view";
 
 export default function Home({ searchParams }: PageProps<"/">) {
@@ -12,9 +13,15 @@ export default function Home({ searchParams }: PageProps<"/">) {
           Track and triage support tickets.
         </p>
       </header>
-      <Suspense fallback={<TicketsViewSkeleton />}>
-        <TicketsView searchParams={searchParams} />
-      </Suspense>
+      <CreateTicketForm />
+      <section aria-labelledby="tickets-heading" className="flex flex-col gap-4">
+        <h2 id="tickets-heading" className="font-medium">
+          Tickets
+        </h2>
+        <Suspense fallback={<TicketsViewSkeleton />}>
+          <TicketsView searchParams={searchParams} />
+        </Suspense>
+      </section>
     </main>
   );
 }
