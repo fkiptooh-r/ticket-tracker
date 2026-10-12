@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LinkPendingHint } from "./link-pending-hint";
 import type { TicketStatus } from "@/lib/types";
 
 type Props = {
@@ -16,7 +17,7 @@ function pageHref(page: number, status?: TicketStatus) {
 }
 
 const linkClass =
-  "rounded-md border border-zinc-300 px-3 py-1.5 text-sm hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800";
+  "inline-flex items-center gap-2 rounded-md border border-zinc-300 px-3 py-1.5 text-sm hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800";
 const disabledClass =
   "rounded-md border border-zinc-200 px-3 py-1.5 text-sm text-zinc-400 dark:border-zinc-800 dark:text-zinc-600";
 
@@ -30,6 +31,7 @@ export function Pagination({ page, totalPages, status }: Props) {
     >
       {page > 1 ? (
         <Link href={pageHref(page - 1, status)} className={linkClass}>
+          <LinkPendingHint />
           Previous
         </Link>
       ) : (
@@ -41,6 +43,7 @@ export function Pagination({ page, totalPages, status }: Props) {
       {page < totalPages ? (
         <Link href={pageHref(page + 1, status)} className={linkClass}>
           Next
+          <LinkPendingHint />
         </Link>
       ) : (
         <span className={disabledClass}>Next</span>

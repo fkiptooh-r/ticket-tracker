@@ -1,6 +1,7 @@
 import { getTickets, getTicketStats } from "@/lib/api";
 import { isTicketStatus } from "@/lib/types";
 import { Pagination } from "./pagination";
+import { RetryButton } from "./retry-button";
 import { StatusFilter } from "./status-filter";
 import { TicketList } from "./ticket-list";
 
@@ -32,12 +33,13 @@ export async function TicketsView({ searchParams }: Props) {
     ]);
   } catch {
     return (
-      <p
+      <div
         role="alert"
-        className="rounded-lg border border-red-300 bg-red-50 p-4 text-sm text-red-800 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-300"
+        className="flex flex-col items-start gap-3 rounded-lg border border-red-300 bg-red-50 p-4 text-sm text-red-800 sm:flex-row sm:items-center sm:justify-between dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-300"
       >
-        Couldn&apos;t load tickets. Check that the API is running and try again.
-      </p>
+        <p>Couldn&apos;t load tickets. Check that the API is running.</p>
+        <RetryButton />
+      </div>
     );
   }
   const [tickets, stats] = result;

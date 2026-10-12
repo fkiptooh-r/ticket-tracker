@@ -19,7 +19,7 @@ export function CreateTicketForm() {
   const [formError, setFormError] = useState<string | null>(null);
   const [created, setCreated] = useState<number | null>(null);
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
     const data = new FormData(form);

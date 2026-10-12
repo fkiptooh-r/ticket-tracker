@@ -54,7 +54,7 @@ export function TicketStatusSelect({ ticketId, ticketTitle, status }: Props) {
         onChange={handleChange}
         disabled={isPending}
         aria-label={`Status of "${ticketTitle}"`}
-        className={`rounded-full border px-2 py-0.5 text-xs font-medium disabled:opacity-60 ${statusStyles[optimisticStatus]}`}
+        className={`rounded-full border px-3 py-1.5 text-sm font-medium sm:px-2 sm:py-0.5 sm:text-xs disabled:opacity-60 ${statusStyles[optimisticStatus]}`}
       >
         {TICKET_STATUSES.map((value) => (
           <option key={value} value={value}>

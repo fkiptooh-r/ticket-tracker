@@ -4,7 +4,7 @@ import { TicketsView, TicketsViewSkeleton } from "@/components/tickets-view";
 
 export default function Home({ searchParams }: PageProps<"/">) {
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-4 py-8">
+    <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-6 sm:px-6 sm:py-8">
       <header>
         <h1 className="text-2xl font-semibold tracking-tight">
           Mini Ticket Tracker
@@ -13,15 +13,24 @@ export default function Home({ searchParams }: PageProps<"/">) {
           Track and triage support tickets.
         </p>
       </header>
-      <CreateTicketForm />
-      <section aria-labelledby="tickets-heading" className="flex flex-col gap-4">
-        <h2 id="tickets-heading" className="font-medium">
-          Tickets
-        </h2>
-        <Suspense fallback={<TicketsViewSkeleton />}>
-          <TicketsView searchParams={searchParams} />
-        </Suspense>
-      </section>
+
+      {/* Stacked on small screens; form becomes a sticky sidebar on wide ones. */}
+      <div className="grid gap-6 lg:grid-cols-[22rem_minmax(0,1fr)] lg:items-start">
+        <aside className="lg:sticky lg:top-8">
+          <CreateTicketForm />
+        </aside>
+        <section
+          aria-labelledby="tickets-heading"
+          className="flex min-w-0 flex-col gap-4"
+        >
+          <h2 id="tickets-heading" className="font-medium">
+            Tickets
+          </h2>
+          <Suspense fallback={<TicketsViewSkeleton />}>
+            <TicketsView searchParams={searchParams} />
+          </Suspense>
+        </section>
+      </div>
     </main>
   );
 }

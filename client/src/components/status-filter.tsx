@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LinkPendingHint } from "./link-pending-hint";
 import {
   STATUS_LABELS,
   TICKET_STATUSES,
@@ -38,6 +39,7 @@ export function StatusFilter({ active, stats }: Props) {
         >
           {option.label}
           <span className="tabular-nums opacity-70">{option.count}</span>
+          <LinkPendingHint />
         </Link>
       ))}
     </nav>
