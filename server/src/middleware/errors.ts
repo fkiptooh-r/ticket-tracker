@@ -1,5 +1,6 @@
 import type { ErrorRequestHandler, RequestHandler } from "express";
 import { ZodError } from "zod";
+import { Prisma } from "../generated/prisma/client.js";
 
 export const notFound: RequestHandler = (_req, res) => {
   res.status(404).json({ error: "Not found" });
@@ -15,6 +16,12 @@ export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
         message: issue.message,
       })),
     });
+    return;
+  }
+
+  // P2025: the record to update or delete doesn't exist.
+  if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2025") {
+    res.status(404).json({ error: "Ticket not found" });
     return;
   }
 

@@ -1,6 +1,11 @@
 import { Router } from "express";
 import { prisma } from "../lib/prisma.js";
-import { createTicketSchema, listTicketsQuerySchema } from "../schemas/ticket.js";
+import {
+  createTicketSchema,
+  listTicketsQuerySchema,
+  ticketIdParamsSchema,
+  updateTicketSchema,
+} from "../schemas/ticket.js";
 
 export const ticketsRouter = Router();
 
@@ -31,4 +36,11 @@ ticketsRouter.get("/", async (req, res) => {
     data: tickets,
     meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
   });
+});
+
+ticketsRouter.patch("/:id", async (req, res) => {
+  const { id } = ticketIdParamsSchema.parse(req.params);
+  const data = updateTicketSchema.parse(req.body);
+  const ticket = await prisma.ticket.update({ where: { id }, data });
+  res.json(ticket);
 });

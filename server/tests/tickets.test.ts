@@ -115,3 +115,40 @@ describe("GET /tickets", () => {
     },
   );
 });
+
+describe("PATCH /tickets/:id", () => {
+  it("updates status and priority independently", async () => {
+    await seedTickets(["open"]);
+
+    const statusRes = await request(app).patch("/tickets/1").send({ status: "in_progress" });
+    const priorityRes = await request(app).patch("/tickets/1").send({ priority: "high" });
+
+    expect(statusRes.status).toBe(200);
+    expect(statusRes.body).toMatchObject({ id: 1, status: "in_progress", priority: "medium" });
+    expect(priorityRes.body).toMatchObject({ id: 1, status: "in_progress", priority: "high" });
+  });
+
+  it("returns 404 for a ticket that doesn't exist", async () => {
+    const res = await request(app).patch("/tickets/999").send({ status: "closed" });
+
+    expect(res.status).toBe(404);
+  });
+
+  it.each([
+    ["an empty body", "/tickets/1", {}],
+    ["an invalid status", "/tickets/1", { status: "done" }],
+    ["a non-editable field", "/tickets/1", { title: "Renamed" }],
+    ["a non-numeric id", "/tickets/abc", { status: "closed" }],
+    ["an out-of-range id", "/tickets/99999999999", { status: "closed" }],
+  ])("rejects %s with 400 and leaves the ticket unchanged", async (_label, path, body) => {
+    await seedTickets(["open"]);
+
+    const res = await request(app).patch(path).send(body);
+
+    expect(res.status).toBe(400);
+    expect(await prisma.ticket.findUnique({ where: { id: 1 } })).toMatchObject({
+      title: "Ticket 1",
+      status: "open",
+    });
+  });
+});
