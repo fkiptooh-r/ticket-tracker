@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { TicketPriority } from "../generated/prisma/enums.js";
+import { TicketPriority, TicketStatus } from "../generated/prisma/enums.js";
 
 // New tickets always start as "open"; status changes go through PATCH.
 export const createTicketSchema = z.strictObject({
@@ -14,3 +14,10 @@ export const createTicketSchema = z.strictObject({
 });
 
 export type CreateTicketInput = z.infer<typeof createTicketSchema>;
+
+// Query params arrive as strings, so page and limit are coerced to numbers.
+export const listTicketsQuerySchema = z.object({
+  status: z.enum(TicketStatus).optional(),
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(10),
+});
