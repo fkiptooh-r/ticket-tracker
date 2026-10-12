@@ -15,3 +15,6 @@ coverage/
 # logs and OS files
 *.log
 .DS_Store
+
+# generated Prisma client (regenerated on npm install)
+server/src/generated/
